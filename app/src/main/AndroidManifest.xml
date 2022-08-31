@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProxLib">
         <activity
+            android:name=".testsale.TestSaleOffActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity4"
             android:exported="true" />
         <activity

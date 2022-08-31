@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.proxglobal.lib.testsale.TestSaleOffActivity
 import com.proxglobal.proxads.ProxUtils
 import com.proxglobal.proxads.ads.openads.AppOpenManager
 import com.proxglobal.proxads.adsv2.callback.AdsCallback
@@ -189,6 +190,10 @@ class MainActivity : BaseActivity() {
         // test purchase
         findViewById<Button>(R.id.btn_test_iap).setOnClickListener {
             startActivity(Intent(this@MainActivity, MainActivity3::class.java))
+        }
+
+        findViewById<Button>(R.id.test_sale_off).setOnClickListener {
+            startActivity(Intent(this, TestSaleOffActivity::class.java))
         }
     }
 }

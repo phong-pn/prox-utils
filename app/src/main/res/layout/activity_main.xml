@@ -95,6 +95,14 @@
                 app:layout_constraintBottom_toBottomOf="parent"
 
                 app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/test_sale_off"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Test Sale Off"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+
 
             <FrameLayout
                 android:id="@+id/ad_container"

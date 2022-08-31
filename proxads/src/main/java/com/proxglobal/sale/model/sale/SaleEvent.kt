@@ -4,6 +4,10 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 class SaleEvent (
+    @SerializedName("is_sale_off")
+    @Expose
+    var isSaleOff: Boolean = false,
+
     @SerializedName("start_time")
     @Expose
     var startTime: Long? = null,
@@ -26,5 +30,9 @@ class SaleEvent (
 
     @SerializedName("script")
     @Expose
-    var saleScripts: List<SaleScript>? = null
+    var saleScripts: List<SaleScript>? = null,
+
+    @SerializedName("enable")
+    @Expose
+    var enable: Boolean? = null
 )

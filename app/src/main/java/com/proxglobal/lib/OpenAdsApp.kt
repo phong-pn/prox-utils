@@ -3,6 +3,8 @@ package com.proxglobal.lib
 import android.util.Log
 import com.proxglobal.proxads.ads.openads.ProxOpenAdsApplication
 import com.proxglobal.purchase.ProxPurchase
+import com.proxglobal.sale.controller.ProxSale
+import com.proxglobal.sale.data.sharepreference.ProxPreferences
 import java.util.*
 
 class OpenAdsApp: ProxOpenAdsApplication() {
@@ -16,6 +18,8 @@ class OpenAdsApp: ProxOpenAdsApplication() {
                 BuildConfig.id_test2_subs,
                 BuildConfig.id_test3_subs
         ))
+        ProxSale.fetch(this)
+        ProxPreferences.init(this)
     }
 
     override fun getOpenAdsId(): String = "ca-app-pub-3940256099942544/3419835294"
