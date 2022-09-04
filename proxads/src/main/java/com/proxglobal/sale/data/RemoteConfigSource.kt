@@ -18,7 +18,7 @@ class RemoteConfigSource {
         })
     }
 
-    private val scripts = mutableListOf<SaleScript>()
+    internal val scripts = mutableListOf<SaleScript>()
 
     internal fun getScript(id: Int) = scripts.find { it.scriptId == id }
 

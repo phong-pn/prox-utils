@@ -29,6 +29,7 @@ class SaleScript {
         const val TYPE_SHOW_BANNER = "banner"
         const val TYPE_SHOW_ICON = "icon"
         const val TYPE_SHOW_FULL_SCREEN = "full_screen"
+        const val TYPE_SHOW_IN_APP_MESSAGE = "in_app_message"
 
         const val TYPE_CONDITION_COUNT_DOWN = "count_down"
         const val TYPE_CONDITION_COUNT_NUMBER = "count_number"

@@ -6,7 +6,9 @@ import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.core.content.ContextCompat
+import com.google.firebase.inappmessaging.display.FiamListener
+import com.google.firebase.inappmessaging.display.ktx.inAppMessagingDisplay
+import com.google.firebase.ktx.Firebase
 import com.proxglobal.lib.testsale.TestSaleOffActivity
 import com.proxglobal.proxads.ProxUtils
 import com.proxglobal.proxads.ads.openads.AppOpenManager
@@ -15,11 +17,28 @@ import com.proxglobal.proxads.adsv2.ads.ProxAds
 import com.proxglobal.rate.ProxRateDialog
 import com.proxglobal.rate.ProxRateDialog.Config
 import com.proxglobal.rate.RatingDialogListener
+import com.proxglobal.sale.controller.ProxSale
+import com.proxglobal.sale.utils.logd
 
 class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Firebase.inAppMessagingDisplay.setFiamListener(object : FiamListener {
+            override fun onFiamTrigger() {
+                "trigger".logd()
+            }
+
+            override fun onFiamClick() {
+                "click".logd()
+            }
+
+            override fun onFiamDismiss() {
+                "dismiss".logd()
+            }
+
+        })
+        ProxSale.modifyShowingInAppMessaging(false)
 
         ProxAds.getInstance()
             .showBanner(this, findViewById(R.id.banner_container), ProxUtils.TEST_BANNER_ID,
