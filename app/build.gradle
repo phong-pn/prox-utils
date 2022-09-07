@@ -67,5 +67,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
     implementation project(":proxads")
+    implementation 'com.github.phong-pn:countdown:1.0.3'
 
 }

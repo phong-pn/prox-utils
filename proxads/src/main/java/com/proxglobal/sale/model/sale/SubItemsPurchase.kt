@@ -4,15 +4,15 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class SubItemsPurchase (
-    @SerializedName("month_sale")
+    @SerializedName("month")
     @Expose
-    var monthSale: String? = null,
+    var monthlyId: String? = null,
 
-    @SerializedName("year_sale")
+    @SerializedName("year")
     @Expose
-    var yearSale: String? = null,
+    var yearlyId: String? = null,
 
-    @SerializedName("forever_sale")
+    @SerializedName("forever")
     @Expose
-    var foreverSale: String? = null
+    var foreverId: String? = null
 )

@@ -1,17 +1,15 @@
 package com.proxglobal.sale.controller
 
-import android.app.Activity
 import android.app.Application
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingDisplayCallbacks
-import com.google.firebase.inappmessaging.display.FiamListener
-import com.google.firebase.inappmessaging.display.ktx.inAppMessagingDisplay
 import com.google.firebase.inappmessaging.ktx.inAppMessaging
 import com.google.firebase.inappmessaging.model.Action
 import com.google.firebase.inappmessaging.model.InAppMessage
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
+import com.proxglobal.purchase.ProxPurchase
 import com.proxglobal.sale.controller.behavior.DefaultShowBannerSaleBehavior
 import com.proxglobal.sale.controller.behavior.DefaultShowInAppMessingBehavior
 import com.proxglobal.sale.controller.behavior.DefaultShowPopupSaleBehavior
@@ -19,7 +17,6 @@ import com.proxglobal.sale.controller.behavior.ShowSaleBehavior
 import com.proxglobal.sale.data.RemoteConfigSource
 import com.proxglobal.sale.model.sale.SaleEvent
 import com.proxglobal.sale.model.sale.SaleScript
-import com.proxglobal.sale.utils.logFirebaseEvent
 import com.proxglobal.sale.utils.logd
 
 /**
@@ -30,13 +27,14 @@ object ProxSale {
 
     fun fetch(application: Application) {
         source.fetch(application)
-        setShowInAppMessagingBehavior(DefaultShowInAppMessingBehavior())
     }
 
     init {
         Firebase.messaging.token.addOnSuccessListener {
             it.logd()
         }
+        // temporarily disable show in-app-messge
+        Firebase.inAppMessaging.setMessagesSuppressed(true)
     }
 
     val currentSaleEvent: SaleEvent
@@ -47,13 +45,15 @@ object ProxSale {
      * @see ShowSaleBehavior
      */
     fun showSale(
-        scriptId: Int,
+        actionId: Int,
         behavior: ShowSaleBehavior,
     ) {
-        val script = source.getScript(scriptId)!!
-        if (behavior.checkCondition(currentSaleEvent, script)) {
-            behavior.onShow(currentSaleEvent, script)
-        } else behavior.onCancel(currentSaleEvent, script)
+        if (!ProxPurchase.getInstance().checkPurchased()) {
+            val script = source.getScript(actionId)!!
+            if (behavior.checkCondition(currentSaleEvent, script)) {
+                behavior.onShow(currentSaleEvent, script)
+            } else behavior.onCancel(currentSaleEvent, script)
+        }
     }
 
     /**
@@ -66,38 +66,30 @@ object ProxSale {
      */
     fun showBanner(
         container: FrameLayout,
-        scriptId: Int,
+        actionId: Int,
         behavior: ShowSaleBehavior = DefaultShowBannerSaleBehavior(container)
     ) {
-        showSale(scriptId, behavior)
+        showSale(actionId, behavior)
     }
 
     fun showPopup(
         fragmentManager: FragmentManager,
-        scriptId: Int,
+        actionId: Int,
         behavior: ShowSaleBehavior = DefaultShowPopupSaleBehavior(fragmentManager)
-    ) = showSale(scriptId, behavior)
+    ) = showSale(actionId, behavior)
 
     fun showFullscreen(
-        scriptId: Int,
+        actionId: Int,
         behavior: ShowSaleBehavior
-    ) = showSale(scriptId, behavior)
-
-
-    fun setShowInAppMessagingBehavior(behavior: ShowSaleBehavior) {
-        if (source.inAppMessageScript != null) showSale(source.inAppMessageScript!!.scriptId, behavior)
-    }
+    ) = showSale(actionId, behavior)
 
     /**
-     * Enable or disable showing message. If [shouldShow] is false, the showing is disable, otherwise enable.
-     * For example, disable showing a sale off message when user in a payment screen. Remember you may need enable the showing
-     * after disable the showing
+     * Programmatically show in-app-message. Note that [triggerEvent] must be match with trigger eventID
+     * of message.
+     *@see <a href = "https://firebase.google.com/docs/in-app-messaging/modify-message-behavior?hl=en&authuser=0&platform=android#trigger_in-app_messages_programmatically_2">See more about trigger event</a>
      */
-    fun modifyShowingInAppMessaging(shouldShow: Boolean) {
-        Firebase.inAppMessaging.setMessagesSuppressed(!shouldShow)
-        if (shouldShow) {
-            Firebase.inAppMessaging.triggerEvent("ready_display")
-        }
+    fun showInAppMessaging(triggerEvent: String = "on_foreground", behavior: ShowSaleBehavior = DefaultShowInAppMessingBehavior()) {
+        if (source.inAppMessageScript != null) showSale(source.inAppMessageScript!!.actionId, behavior)
     }
 
     /**
@@ -119,7 +111,7 @@ object ProxSale {
 
     private val RemoteConfigSource.inAppMessageScript: SaleScript?
         get() {
-            return scripts.find { it.showConditionType == SaleScript.TYPE_SHOW_IN_APP_MESSAGE }
+            return event.saleScripts?.find { it.showConditionType == SaleScript.TYPE_SHOW_IN_APP_MESSAGE }
         }
 }
 

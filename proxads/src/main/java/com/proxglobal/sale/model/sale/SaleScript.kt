@@ -4,9 +4,13 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 class SaleScript {
-    @SerializedName("script_id")
+    @SerializedName("script_name")
     @Expose
-    var scriptId: Int = 0
+    var scriptName: String? = null
+
+    @SerializedName("action_id")
+    @Expose
+    var actionId: Int = 0
 
     @SerializedName("show_type")
     @Expose
@@ -14,7 +18,8 @@ class SaleScript {
 
     @SerializedName("show_condition_value")
     @Expose
-    var showConditionValue: Int? = null
+    val showConditionValue: Any? = null
+
 
     @SerializedName("show_condition_type")
     @Expose
@@ -23,6 +28,10 @@ class SaleScript {
     @SerializedName("design")
     @Expose
     var saleDesign: SaleDesign? = null
+
+    @SerializedName("content")
+    @Expose
+    var scriptContent: SaleContent? = null
 
     companion object {
         const val TYPE_SHOW_POP_UP = "pop_up"
@@ -33,5 +42,6 @@ class SaleScript {
 
         const val TYPE_CONDITION_COUNT_DOWN = "count_down"
         const val TYPE_CONDITION_COUNT_NUMBER = "count_number"
+        const val TYPE_CONDITION_BOOLEAN = "true_false"
     }
 }

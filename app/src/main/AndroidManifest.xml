@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.proxglobal.lib">
 
     <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-sdk android:minSdkVersion="21" tools:overrideLibrary="com.phongpn.countdown"/>
 
     <application
         android:name=".OpenAdsApp"

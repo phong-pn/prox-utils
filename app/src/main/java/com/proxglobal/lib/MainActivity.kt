@@ -38,8 +38,6 @@ class MainActivity : BaseActivity() {
             }
 
         })
-        ProxSale.modifyShowingInAppMessaging(false)
-
         ProxAds.getInstance()
             .showBanner(this, findViewById(R.id.banner_container), ProxUtils.TEST_BANNER_ID,
                 object : AdsCallback() {

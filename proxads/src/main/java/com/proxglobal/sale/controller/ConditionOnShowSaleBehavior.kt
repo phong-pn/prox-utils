@@ -4,6 +4,7 @@ import com.proxglobal.sale.controller.behavior.ShowSaleBehavior
 import com.proxglobal.sale.data.sharepreference.ProxPreferences
 import com.proxglobal.sale.model.sale.SaleEvent
 import com.proxglobal.sale.model.sale.SaleScript
+import com.proxglobal.sale.model.sale.SaleScript.Companion.TYPE_CONDITION_BOOLEAN
 import com.proxglobal.sale.model.sale.SaleScript.Companion.TYPE_CONDITION_COUNT_DOWN
 import com.proxglobal.sale.model.sale.SaleScript.Companion.TYPE_CONDITION_COUNT_NUMBER
 import java.util.*
@@ -15,12 +16,12 @@ import java.util.*
 abstract class ConditionOnShowSaleBehavior : ShowSaleBehavior {
     private fun increaseCount(script: SaleScript) {
         if (script.showConditionType == TYPE_CONDITION_COUNT_NUMBER) {
-            val key = "sale_script_id_${script.scriptId}"
+            val key = "sale_script_id_${script.actionId}"
             var countOfScript = ProxPreferences.valueOf(key, 0)
             countOfScript++
             ProxPreferences.setValue(
                 key,
-                if (countOfScript > script.showConditionValue!!) 0 else countOfScript
+                if (countOfScript > (script.showConditionValue!! as Number).toInt()) 0 else countOfScript
             )
         }
     }
@@ -31,14 +32,15 @@ abstract class ConditionOnShowSaleBehavior : ShowSaleBehavior {
                 if (event.endTime == null) true
                 else {
                     if (script.showConditionValue == null) throw NullPointerException("show_condition_value is missing. Please sure that property is existed in Remote Config")
-                    else (event.endTime!! - Date().time) / (1000 * 60) <= script.showConditionValue!!
+                    else (event.endTime!! - Date().time) / (1000 * 60f) <= (script.showConditionValue as Number).toFloat()
                 }
             }
             TYPE_CONDITION_COUNT_NUMBER -> {
                 if (script.showConditionValue == null) throw NullPointerException("show_condition_value is missing. Please sure that property is existed in Remote Config")
-                val key = "sale_script_id_${script.scriptId}"
-                ProxPreferences.valueOf(key, 0) == script.showConditionValue
+                val key = "sale_script_id_${script.actionId}"
+                ProxPreferences.valueOf(key, 0) == (script.showConditionValue as Number).toInt()
             }
+            TYPE_CONDITION_BOOLEAN -> script.showConditionValue  as Boolean
             else -> true
         }
     }

@@ -3,7 +3,7 @@ package com.proxglobal.sale.model.sale
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class SaleEventContent {
+class SaleContent {
     @SerializedName("title")
     @Expose
     var title: String? = null

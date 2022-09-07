@@ -18,11 +18,10 @@ class RemoteConfigSource {
         })
     }
 
-    internal val scripts = mutableListOf<SaleScript>()
-
-    internal fun getScript(id: Int) = scripts.find { it.scriptId == id }
-
     internal var event: SaleEvent = SaleEvent()
+
+    internal fun getScript(actionId: Int) = event.saleScripts?.find { it.actionId == actionId }
+
 
     internal fun fetch(application: Application) {
         remoteConfig.fetchAndActivate().addOnCompleteListener {
@@ -41,7 +40,11 @@ class RemoteConfigSource {
                 // Third, if 2 or more sale-off event match conditions, choose the first. If have no sale-off event is chosen, choose the default sale-event
                 val saleConfigs = saleKeyConfigs.map { remoteConfig.getString(it) }
                 val saleEvents =
-                    saleConfigs.map { Gson().fromJson(it, SaleEvent::class.java) }.toMutableList()
+                    saleConfigs.map { keyConfig ->
+                        val event = Gson().fromJson(keyConfig, SaleEvent::class.java)
+                        if (keyConfig != "sale_default") event.isSaleOff = true
+                        event
+                    }.toMutableList()
                 for (i in saleEvents.indices) {
                     if (i < saleEvents.size && saleEvents[i].enable == false) {
                         saleEvents.remove(saleEvents[i])
@@ -58,9 +61,13 @@ class RemoteConfigSource {
                 }
             }
             event.isSaleOff.logd()
-            scripts.addAll(event.saleScripts!!)
+            event.saleScripts?.forEach { script ->
+                if (script.scriptContent == null)  {
+                    script.scriptContent = event.saleDefaultContent
+                }
+            }
             ProxPurchase.getInstance().initBilling(application, null, event.subItems.let {
-                listOf(it?.foreverSale, it?.yearSale, it?.monthSale).mapNotNull { it }
+                listOf(it?.foreverId, it?.yearlyId, it?.monthlyId).mapNotNull { it }
             })
         }
     }
